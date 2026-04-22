@@ -169,13 +169,6 @@ extern bool DrawOSD;
 // SRT/OSD
 extern bool recording_running;
 
-static void send_display_size(int serial_fd) {
-	uint8_t buffer[8];
-	uint8_t payload[2] = {MAX_DISPLAY_X, MAX_DISPLAY_Y};
-	construct_msp_command(buffer, MSP_CMD_SET_OSD_CANVAS, payload, 2, MSP_OUTBOUND);
-	write(serial_fd, &buffer, sizeof(buffer));
-}
-
 static void send_variant_request(int serial_fd) {
 	uint8_t buffer[6];
 	construct_msp_command(buffer, MSP_CMD_FC_VARIANT, NULL, 0, MSP_OUTBOUND);
@@ -333,6 +326,13 @@ uint16_t OVERLAY_HEIGHT = 1000;
 
 static displayport_vtable_t *display_driver;
 static display_info_t current_display_info = SD_DISPLAY_INFO;
+
+static void send_display_size(int serial_fd) {  
+    uint8_t buffer[8];  
+    uint8_t payload[2] = {current_display_info.char_width, current_display_info.char_height};  
+    construct_msp_command(buffer, MSP_CMD_SET_OSD_CANVAS, payload, 2, MSP_OUTBOUND);  
+    write(serial_fd, &buffer, sizeof(buffer));  
+}
 
 typedef enum {
 	FONT_BUCKET_HD = 0,
